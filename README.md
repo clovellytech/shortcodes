@@ -1,4 +1,4 @@
-Short codes for Scala
+Short codes for Scala [![Build Status][travis-badge]][travis-url] [![Sonatype Release][sonatype-badge]][sonatype-url]
 ===
 
 This project uses a dictionary of words to generate random short sequences. These are intended for generating site invitation codes, but could probably be used for other purposes.
@@ -17,3 +17,9 @@ res0: (cats.data.NonEmptyVector[String], Array[Byte]) = (NonEmptyVector(join, je
 scala> sc.bytesToWords(res0._2).value.unsafeRunSync().get
 res1: cats.data.NonEmptyVector[String] = NonEmptyVector(join, jewel, practice, mixture, inhale)
 ```
+
+
+[travis-badge]: https://travis-ci.com/clovellytech/shortcodes.svg?branch=master "Build Status"
+[travis-url]: https://travis-ci.com/clovellytech/shortcodes "Build Status"
+[sonatype-badge]: https://img.shields.io/nexus/r/com.clovellytech/shortcodes_2.13.svg?server=https://oss.sonatype.org "Sonatype Releases"
+[sonatype-url]: https://oss.sonatype.org/content/groups/public/com/clovellytech/ "Sonatype Releases"
