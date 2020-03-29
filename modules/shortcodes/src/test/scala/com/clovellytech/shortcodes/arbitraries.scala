@@ -19,7 +19,7 @@ object arbitraries {
   def wordListGen[F[_]: Sync: ContextShift](blocker: Blocker): OptionT[F, Gen[WordList]] = {
     val r = new ShortCode[F](blocker)
 
-    r.getRandom(100000).map(_._1).map{ ws =>
+    r.getRandom(100000).map(_._1).map { ws =>
       Gen.nonEmptyListOf(Gen.oneOf(ws.toIterable)).map(_.toVector.toNev.get)
     }
   }

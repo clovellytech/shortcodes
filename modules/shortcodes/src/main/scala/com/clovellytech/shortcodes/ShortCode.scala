@@ -32,7 +32,7 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
 
   def toByteArray(words: NonEmptyVector[Long]): Array[Byte] = {
     val res = words.map(n => BigInt(n).toByteArray.toList).reduce.toArray
-    if(res.length < 2) {
+    if (res.length < 2) {
       0.toByte +: res
     } else {
       res
@@ -46,7 +46,7 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
       longs <- OptionT.fromOption[F](words.traverse(w => wsMap.get(w)))
     } yield {
       val res = toByteArray(longs)
-      if(res.length < 2) {
+      if (res.length < 2) {
         0.toByte +: res
       } else {
         res

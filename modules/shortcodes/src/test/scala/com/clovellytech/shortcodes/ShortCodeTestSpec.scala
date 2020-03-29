@@ -19,14 +19,13 @@ class ShortCodeTestSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
     wordListGen[IO](b).value.unsafeRunSync().get
   }
 
-
   "codes" should "be reversible" in forAll { (ws: WordList) =>
     for {
       bytes <- r.toByteArray(ws)
       words <- r.bytesToWords(bytes)
     } yield {
       ws.toVector should not be empty
-      ws.toVector should equal (words.toVector)
+      ws.toVector should equal(words.toVector)
     }
   }
 
@@ -35,7 +34,7 @@ class ShortCodeTestSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
       words <- r.bytesToWords(bs)
       decoded <- r.toByteArray(words)
     } yield {
-      bs should equal (decoded)
+      bs should equal(decoded)
     }
   }
 
