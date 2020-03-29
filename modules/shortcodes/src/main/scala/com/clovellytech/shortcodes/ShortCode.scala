@@ -30,20 +30,33 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
   def all: OptionT[F, NonEmptyVector[(String, Long)]] =
     OptionT(words.compile.toVector.map(_.toNev))
 
-  def toByteArray(words: NonEmptyVector[Long]): Array[Byte] =
-    words.map(n => BigInt(n).toByteArray.toList).reduce.toArray
+  def toByteArray(words: NonEmptyVector[Long]): Array[Byte] = {
+    val res = words.map(n => BigInt(n).toByteArray.toList).reduce.toArray
+    if(res.length < 2) {
+      0.toByte +: res
+    } else {
+      res
+    }
+  }
 
   def toByteArray(words: NonEmptyVector[String]): OptionT[F, Array[Byte]] =
     for {
       ws <- all
       wsMap <- OptionT.pure[F](ws.toIterable.toMap)
       longs <- OptionT.fromOption[F](words.traverse(w => wsMap.get(w)))
-    } yield toByteArray(longs)
+    } yield {
+      val res = toByteArray(longs)
+      if(res.length < 2) {
+        0.toByte +: res
+      } else {
+        res
+      }
+    }
 
   def bytesToWords(bytes: Array[Byte]): OptionT[F, NonEmptyVector[String]] =
     for {
       ws <- all
-      byteGroups <- OptionT.pure[F](bytes.grouped(8).toVector)
+      byteGroups <- OptionT.pure[F](bytes.grouped(2).toVector)
       indices <- OptionT.pure[F](byteGroups.map(v => BigInt(v).toLong))
       wsMap <- OptionT.pure[F](ws.toIterable.map(_.swap).toMap)
       words <- OptionT.fromOption[F](indices.traverse(i => wsMap.get(i)).flatMap(_.toNev))
