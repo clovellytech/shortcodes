@@ -1,8 +1,10 @@
 package com.clovellytech.shortcodes
 
 import arbitraries._
+import cats.data.OptionT
 import cats.effect._
 import org.scalacheck._
+import org.scalatest.Assertion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -20,22 +22,26 @@ class ShortCodeTestSpec extends AnyFlatSpec with Matchers with ScalaCheckPropert
   }
 
   "codes" should "be reversible" in forAll { (ws: WordList) =>
-    for {
+    val test: OptionT[IO, Assertion] = for {
       bytes <- r.toByteArray(ws)
       words <- r.bytesToWords(bytes)
     } yield {
       ws.toVector should not be empty
       ws.toVector should equal(words.toVector)
     }
+
+    test.value.unsafeRunSync()
   }
 
   "bytes" should "be decodable" in forAll { (bs: ByteEncodedWord) =>
-    for {
+    val test: OptionT[IO, Assertion] = for {
       words <- r.bytesToWords(bs)
       decoded <- r.toByteArray(words)
     } yield {
       bs should equal(decoded)
     }
+
+    test.value.unsafeRunSync()
   }
 
 }
