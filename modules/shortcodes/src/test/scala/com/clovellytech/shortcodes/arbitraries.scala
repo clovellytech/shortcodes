@@ -12,8 +12,17 @@ object arbitraries {
   type WordList = NonEmptyVector[String]
   type ByteEncodedWord = Array[Byte]
 
-  implicit val byteEncodedArb = Arbitrary {
-    Gen.listOfN[Byte](8, Gen.Choose.chooseByte.choose(Byte.MinValue, Byte.MaxValue))
+  implicit val byteEncodedArb: Arbitrary[ByteEncodedWord] = Arbitrary {
+    val byteGen =
+      Gen.nonEmptyListOf[Byte](Gen.Choose.chooseByte.choose(Byte.MinValue, Byte.MaxValue))
+    // just doing it this way because our implementation requires byte pairs, so this
+    // ensures we return an array of at least length two.
+    for {
+      l1 <- byteGen
+      l2 <- byteGen
+    } yield {
+      (l1 ++ l2).toArray
+    }
   }
 
   def wordListGen[F[_]: Sync: ContextShift](blocker: Blocker): OptionT[F, Gen[WordList]] = {
