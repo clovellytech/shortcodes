@@ -21,15 +21,15 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
   def fileLoc = "/com/clovellytech/shortcode/wordlist.txt"
   def uri = new URI(getClass.getResource(fileLoc).toExternalForm())
 
-  def path = if(uri.toString.contains(".jar!")){
-    val m = new java.util.HashMap[String, String]()
-    m.put("create", "true")
-    val zipfs = FileSystems.newFileSystem(uri, m)
-    zipfs.getPath(fileLoc)
-  } else {
-    Paths.get(uri)
-  }
-
+  def path =
+    if (uri.toString.contains(".jar!")) {
+      val m = new java.util.HashMap[String, String]()
+      m.put("create", "true")
+      val zipfs = FileSystems.newFileSystem(uri, m)
+      zipfs.getPath(fileLoc)
+    } else {
+      Paths.get(uri)
+    }
 
   def words: Stream[F, (String, Long)] =
     io.file
