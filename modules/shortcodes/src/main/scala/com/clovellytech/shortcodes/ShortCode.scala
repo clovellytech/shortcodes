@@ -5,9 +5,10 @@ import cats.data.NonEmptyVector
 import cats.data.OptionT
 import cats.implicits._
 import fs2._
-import java.nio.file.Paths
+import java.nio.file._
 import scala.math.BigInt
 import scala.util.Random
+import java.net.URI
 
 /**
   * Use shortcode to generate sequences of words from a dictionary. Words are encoded and decoded
@@ -17,8 +18,18 @@ import scala.util.Random
   */
 class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
 
-  def uri = getClass.getResource("/wordlist.txt").toURI()
-  def path = Paths.get(uri)
+  def fileLoc = "/com/clovellytech/shortcode/wordlist.txt"
+  def uri = new URI(getClass.getResource(fileLoc).toExternalForm())
+
+  def path = if(uri.toString.contains(".jar!")){
+    val m = new java.util.HashMap[String, String]()
+    m.put("create", "true")
+    val zipfs = FileSystems.newFileSystem(uri, m)
+    zipfs.getPath(fileLoc)
+  } else {
+    Paths.get(uri)
+  }
+
 
   def words: Stream[F, (String, Long)] =
     io.file
