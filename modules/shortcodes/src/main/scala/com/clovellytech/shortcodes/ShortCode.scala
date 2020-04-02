@@ -24,9 +24,9 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
   def path =
     if (uri.toString.contains(".jar!")) {
       val zipfs = Try {
-        FileSystems.getFileSystem(uri)
-      }.getOrElse {
         FileSystems.newFileSystem(uri, new java.util.HashMap[String, String]())
+      }.getOrElse {
+        FileSystems.getFileSystem(uri)
       }
       zipfs.getPath(fileLoc)
     } else {
