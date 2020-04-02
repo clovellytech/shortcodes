@@ -5,10 +5,10 @@ import cats.data.NonEmptyVector
 import cats.data.OptionT
 import cats.implicits._
 import fs2._
+import java.net.URI
 import java.nio.file._
 import scala.math.BigInt
-import scala.util.Random
-import java.net.URI
+import scala.util.{Random, Try}
 
 /**
   * Use shortcode to generate sequences of words from a dictionary. Words are encoded and decoded
@@ -23,9 +23,11 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
 
   def path =
     if (uri.toString.contains(".jar!")) {
-      val m = new java.util.HashMap[String, String]()
-      m.put("create", "true")
-      val zipfs = FileSystems.newFileSystem(uri, m)
+      val zipfs = Try {
+        FileSystems.getFileSystem(uri)
+      }.getOrElse {
+        FileSystems.newFileSystem(uri, new java.util.HashMap[String, String]())
+      }
       zipfs.getPath(fileLoc)
     } else {
       Paths.get(uri)
