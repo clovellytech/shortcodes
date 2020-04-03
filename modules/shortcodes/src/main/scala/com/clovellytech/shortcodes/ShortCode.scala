@@ -43,28 +43,25 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
   def all: OptionT[F, NonEmptyVector[(String, Long)]] =
     OptionT(words.compile.toVector.map(_.toNev))
 
-  def toByteArray(words: NonEmptyVector[Long]): Array[Byte] = {
-    val res = words.map(n => BigInt(n).toByteArray.toList).reduce.toArray
-    if (res.length < 2) {
-      0.toByte +: res
-    } else {
-      res
-    }
-  }
+  def toByteArray(words: NonEmptyVector[Long]): Array[Byte] =
+    words
+      .map { n =>
+        val bs = BigInt(n).toByteArray.toList
+        if (bs.length < 2) {
+          0.toByte :: bs
+        } else {
+          bs
+        }
+      }
+      .reduce
+      .toArray
 
   def toByteArray(words: NonEmptyVector[String]): OptionT[F, Array[Byte]] =
     for {
       ws <- all
       wsMap <- OptionT.pure[F](ws.toIterable.toMap)
       longs <- OptionT.fromOption[F](words.traverse(w => wsMap.get(w)))
-    } yield {
-      val res = toByteArray(longs)
-      if (res.length < 2) {
-        0.toByte +: res
-      } else {
-        res
-      }
-    }
+    } yield toByteArray(longs)
 
   def bytesToWords(bytes: Array[Byte]): OptionT[F, NonEmptyVector[String]] =
     for {
