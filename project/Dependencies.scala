@@ -13,7 +13,7 @@ object dependencies {
     val betterMonadicFor = "0.3.1"
     val cats = "2.1.1"
     val catsEffect = "2.1.2"
-    val fs2 = "2.3.0"
+    val fs2 = "2.4.2"
     val kindProjector212 = "0.10.3"
     val kindProjector213 = "0.11.0"
     val macroParadise = "2.1.1"
