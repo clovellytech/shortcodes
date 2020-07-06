@@ -29,9 +29,8 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
         FileSystems.getFileSystem(uri)
       }
       zipfs.getPath(fileLoc)
-    } else {
+    } else
       Paths.get(uri)
-    }
 
   def words: Stream[F, (String, Long)] =
     io.file
@@ -47,11 +46,10 @@ class ShortCode[F[_]: Sync: ContextShift](blocker: Blocker) {
     words
       .map { n =>
         val bs = BigInt(n).toByteArray.toList
-        if (bs.length < 2) {
+        if (bs.length < 2)
           0.toByte :: bs
-        } else {
+        else
           bs
-        }
       }
       .reduce
       .toArray
