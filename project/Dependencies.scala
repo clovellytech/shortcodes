@@ -18,7 +18,7 @@ object dependencies {
     val kindProjector213 = "0.11.0"
     val macroParadise = "2.1.1"
     val scalaCheck = "1.15.0-e5dc7d1-SNAPSHOT"
-    val scalaTest = "3.2.0-M1"
+    val scalaTest = "3.2.0"
     val scalaTestPlusScalacheck = "3.1.0.0-RC2"
     val simulacrum = "1.0.0"
   }
